@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AniBot — Something Went Wrong</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050810;
+      --surface: #0d1220;
+      --border: #1a2540;
+      --accent: #e84dff;
+      --accent2: #4dffd5;
+      --accent3: #ff4d6d;
+      --text: #c8d8f0;
+      --text-dim: #5a6e99;
+      --glow: rgba(232, 77, 255, 0.25);
+      --glow2: rgba(77, 255, 213, 0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Background grid & orbs ── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(232,77,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,77,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(232,77,255,0.12); top: -100px; left: -120px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(77,255,213,0.08); bottom: -80px; right: -100px; animation-delay: -4s; }
+    .orb-3 { width: 280px; height: 280px; background: rgba(255,77,109,0.07); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* ── Scanlines ── */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+    }
+
+    /* ── Container ── */
+    .container {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 32px; padding: 40px 24px; max-width: 680px; width: 100%;
+      text-align: center;
+    }
+
+    /* ── Logo badge ── */
+    .logo-wrap {
+      display: flex; align-items: center; gap: 14px;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .logo-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--accent), #7b2fff);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 24px var(--glow), 0 0 60px rgba(232,77,255,0.1);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 24px var(--glow), 0 0 60px rgba(232,77,255,0.1); }
+      50% { box-shadow: 0 0 40px rgba(232,77,255,0.5), 0 0 80px rgba(232,77,255,0.2); }
+    }
+
+    .logo-name {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900; font-size: 28px; letter-spacing: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* ── Error card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.8s ease 0.15s both;
+      box-shadow: 0 0 0 1px rgba(232,77,255,0.05), 0 32px 80px rgba(0,0,0,0.5);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .error-code {
+      font-family: 'Orbitron', monospace;
+      font-size: 80px; font-weight: 900; line-height: 1;
+      letter-spacing: -2px;
+      color: var(--accent3);
+      text-shadow: 0 0 40px rgba(255,77,109,0.4);
+      animation: glitch 4s ease-in-out infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { text-shadow: 0 0 40px rgba(255,77,109,0.4); transform: translate(0); }
+      92% { transform: translate(-3px, 1px); text-shadow: 3px 0 var(--accent), -3px 0 var(--accent2); }
+      94% { transform: translate(3px, -1px); text-shadow: -3px 0 var(--accent), 3px 0 var(--accent2); }
+      96% { transform: translate(0); }
+    }
+
+    .error-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
+      color: var(--accent3);
+      opacity: 0.7; margin-bottom: 28px;
+    }
+
+    .error-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px; font-weight: 700; color: #fff;
+      margin-bottom: 14px; line-height: 1.3;
+    }
+
+    .error-msg {
+      font-size: 15px; color: var(--text-dim); line-height: 1.7;
+      max-width: 440px; margin: 0 auto 32px;
+    }
+
+    .error-msg strong { color: var(--accent2); font-weight: 600; }
+
+    /* ── Error type badges ── */
+    .error-types {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; margin-bottom: 36px;
+    }
+
+    .badge {
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 12px; font-family: 'Orbitron', monospace;
+      letter-spacing: 1px; cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .badge-scope {
+      background: rgba(255,77,109,0.1);
+      border-color: rgba(255,77,109,0.3);
+      color: var(--accent3);
+    }
+    .badge-scope:hover, .badge-scope.active {
+      background: rgba(255,77,109,0.2);
+      border-color: var(--accent3);
+      box-shadow: 0 0 16px rgba(255,77,109,0.25);
+    }
+
+    .badge-network {
+      background: rgba(232,77,255,0.1);
+      border-color: rgba(232,77,255,0.3);
+      color: var(--accent);
+    }
+    .badge-network:hover, .badge-network.active {
+      background: rgba(232,77,255,0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(232,77,255,0.25);
+    }
+
+    .badge-timeout {
+      background: rgba(77,255,213,0.1);
+      border-color: rgba(77,255,213,0.3);
+      color: var(--accent2);
+    }
+    .badge-timeout:hover, .badge-timeout.active {
+      background: rgba(77,255,213,0.2);
+      border-color: var(--accent2);
+      box-shadow: 0 0 16px rgba(77,255,213,0.25);
+    }
+
+    /* ── Detail box ── */
+    .detail-box {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      text-align: left;
+      margin-bottom: 32px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .detail-box.show { display: block; }
+    .detail-box .detail-line { display: flex; gap: 12px; margin-bottom: 6px; }
+    .detail-box .detail-line:last-child { margin-bottom: 0; }
+    .detail-key { color: var(--accent); min-width: 100px; }
+    .detail-val { color: var(--text); }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #7b2fff);
+      color: #fff;
+      box-shadow: 0 0 24px rgba(232,77,255,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(232,77,255,0.5), 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(77,255,213,0.15);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: 12px; color: var(--text-dim); letter-spacing: 1px;
+      animation: fadeUp 0.8s ease 0.35s both;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    /* ── Countdown ── */
+    .countdown-wrap {
+      display: none; align-items: center; gap: 8px;
+      font-family: 'Orbitron', monospace; font-size: 12px;
+      color: var(--text-dim); margin-top: 16px;
+    }
+    .countdown-wrap.show { display: flex; }
+    #countdown { color: var(--accent2); font-weight: 700; min-width: 18px; display: inline-block; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 520px) {
+      .error-code { font-size: 56px; }
+      .card { padding: 36px 24px; }
+      .btn { padding: 12px 18px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="scanlines"></div>
+
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-icon">🎌</div>
+      <span class="logo-name">ANIBOT</span>
+    </div>
+
+    <!-- Error Card -->
+    <div class="card">
+      <div class="error-code" id="errorCode">ERR</div>
+      <div class="error-label" id="errorLabel">SYSTEM ERROR</div>
+
+      <div class="error-title" id="errorTitle">Something interrupted your stream</div>
+      <p class="error-msg" id="errorMsg">
+        AniBot ran into an issue while processing your request.
+        Select the error type below for more details, or head back and try again.
+      </p>
+
+      <!-- Error type selector -->
+      <div class="error-types">
+        <div class="badge badge-scope" onclick="setError('scope')">SCOPE ERROR</div>
+        <div class="badge badge-network" onclick="setError('network')">NETWORK ERROR</div>
+        <div class="badge badge-timeout" onclick="setError('timeout')">TIMEOUT</div>
+      </div>
+
+      <!-- Detail box -->
+      <div class="detail-box" id="detailBox">
+        <div class="detail-line">
+          <span class="detail-key">ERROR_TYPE</span>
+          <span class="detail-val" id="dType">—</span>
+        </div>
+        <div class="detail-line">
+          <span class="detail-key">CODE</span>
+          <span class="detail-val" id="dCode">—</span>
+        </div>
+        <div class="detail-line">
+          <span class="detail-key">CAUSE</span>
+          <span class="detail-val" id="dCause">—</span>
+        </div>
+        <div class="detail-line">
+          <span class="detail-key">FIX</span>
+          <span class="detail-val" id="dFix">—</span>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <a href="/" class="btn btn-primary">⟵ &nbsp;GO BACK HOME</a>
+        <a href="https://github.com/YourUsername/AniBot/issues" target="_blank" class="btn btn-ghost">REPORT BUG</a>
+      </div>
+
+      <!-- Auto-redirect countdown -->
+      <div class="countdown-wrap" id="countdownWrap">
+        <span>Auto-redirecting in</span>
+        <span id="countdown">10</span>
+        <span>seconds…</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Made with ❤️ for anime fans &nbsp;·&nbsp;
+      <a href="https://github.com/YourUsername/AniBot" target="_blank">AniBot on GitHub</a>
+    </div>
+
+  </div>
+
+  <script>
+    // ── Error definitions ──
+    const errors = {
+      scope: {
+        code: '403',
+        label: 'SCOPE ERROR',
+        title: 'Insufficient permissions for this action',
+        msg: `AniBot doesn't have the required <strong>OAuth scope</strong> to perform this operation. The bot may be missing certain permissions in your server or the invite link used didn't include all necessary scopes.`,
+        dType: 'OAuth / Permission',
+        dCode: 'SCOPE_DENIED',
+        dCause: 'Missing bot scope or permissions in server',
+        dFix: 'Re-invite the bot using the full permissions link',
+      },
+      network: {
+        code: '503',
+        label: 'NETWORK ERROR',
+        title: 'Could not reach the anime source',
+        msg: `AniBot failed to connect to the anime source server. This may be a <strong>temporary outage</strong> or a connection issue on the host side. Please wait a moment and try again.`,
+        dType: 'Network / Connectivity',
+        dCode: 'CONNECTION_REFUSED',
+        dCause: 'Upstream anime server unreachable',
+        dFix: 'Wait a few minutes and retry the command',
+      },
+      timeout: {
+        code: '408',
+        label: 'TIMEOUT',
+        title: 'The request took too long',
+        msg: `Your request exceeded AniBot's response limit. This usually happens when the <strong>source server is slow</strong> or the file being fetched is very large. Try again or pick a smaller quality option.`,
+        dType: 'Request Timeout',
+        dCode: 'TIMEOUT_EXCEEDED',
+        dCause: 'Server response too slow or file too large',
+        dFix: 'Retry or choose a lower quality/episode',
+      },
+    };
+
+    let active = null;
+    let countdownTimer = null;
+
+    function setError(type) {
+      // Toggle off
+      if (active === type) {
+        active = null;
+        document.querySelectorAll('.badge').forEach(b => b.classList.remove('active'));
+        document.getElementById('detailBox').classList.remove('show');
+        document.getElementById('countdownWrap').classList.remove('show');
+        resetCard();
+        clearInterval(countdownTimer);
+        return;
+      }
+
+      active = type;
+      const e = errors[type];
+
+      // Highlight badge
+      document.querySelectorAll('.badge').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.badge-${type}`).classList.add('active');
+
+      // Update card content
+      const codeEl = document.getElementById('errorCode');
+      codeEl.textContent = e.code;
+      document.getElementById('errorLabel').textContent = e.label;
+      document.getElementById('errorTitle').textContent = e.title;
+      document.getElementById('errorMsg').innerHTML = e.msg;
+
+      // Color the error code
+      codeEl.style.color = type === 'scope' ? 'var(--accent3)' : type === 'network' ? 'var(--accent)' : 'var(--accent2)';
+
+      // Fill detail box
+      document.getElementById('dType').textContent  = e.dType;
+      document.getElementById('dCode').textContent  = e.dCode;
+      document.getElementById('dCause').textContent = e.dCause;
+      document.getElementById('dFix').textContent   = e.dFix;
+      document.getElementById('detailBox').classList.add('show');
+
+      // Start countdown
+      clearInterval(countdownTimer);
+      let secs = 10;
+      document.getElementById('countdown').textContent = secs;
+      document.getElementById('countdownWrap').classList.add('show');
+
+      countdownTimer = setInterval(() => {
+        secs--;
+        document.getElementById('countdown').textContent = secs;
+        if (secs <= 0) {
+          clearInterval(countdownTimer);
+          window.location.href = '/';
+        }
+      }, 1000);
+    }
+
+    function resetCard() {
+      document.getElementById('errorCode').textContent = 'ERR';
+      document.getElementById('errorCode').style.color = 'var(--accent3)';
+      document.getElementById('errorLabel').textContent = 'SYSTEM ERROR';
+      document.getElementById('errorTitle').textContent = 'Something interrupted your stream';
+      document.getElementById('errorMsg').innerHTML = `AniBot ran into an issue while processing your request.
+        Select the error type below for more details, or head back and try again.`;
+    }
+
+    // Auto-detect error from URL param: ?error=scope|network|timeout
+    const params = new URLSearchParams(window.location.search);
+    const urlError = params.get('error');
+    if (urlError && errors[urlError]) {
+      setTimeout(() => setError(urlError), 600);
+    }
+  </script>
+
+</body>
+</html>
