@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**AniBot** — Operated by [Your Dev Server/Org Name]
+**AniBot** — Operated by Pikaorsmth
 **Last updated:** April 2, 2026
 
 ---
