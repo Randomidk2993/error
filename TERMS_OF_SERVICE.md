@@ -1,6 +1,6 @@
 # Terms of Service
 
-**AniBot** — Operated by [Your Dev Server/Org Name]
+**AniBot** — Operated by Pikaorsmth
 **Last updated:** April 2, 2026
 
 ---
@@ -53,7 +53,7 @@ You agree **not** to use AniBot to:
 
 > ⚠️ **Please read this section carefully before using AniBot.**
 
-AniBot retrieves anime content from third-party sources, including **9anime**. We do not host, upload, store, or own any of the content delivered through the bot.
+AniBot retrieves anime content from third-party sources, including **9anime**. We do not host, upload, or own any of the content delivered through the bot.
 
 **You should be aware of the following:**
 
